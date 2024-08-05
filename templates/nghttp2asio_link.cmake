@@ -1,0 +1,5 @@
+find_package(Boost COMPONENTS system)
+find_package(OpenSSL REQUIRED)
+find_package(Libngtcp2 MODULE REQUIRED)
+find_package(Libnghttp2 MODULE REQUIRED)
+set_property(TARGET Libnghttp2asio::Libnghttp2asio APPEND PROPERTY INTERFACE_LINK_LIBRARIES Boost::system OpenSSL::SSL Libngtcp2::Libngtcp2 Libnghttp2::Libnghttp2)

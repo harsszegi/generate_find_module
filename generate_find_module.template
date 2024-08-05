@@ -1,93 +1,213 @@
-#
-# Finds $name and populates variables and imported targets
-# 
-# Hints:
-#   ${name}_ROOT
-#   ${name}_INCLUDEDIR
-#   ${name}_LIBRARYDIR
-#   ${name}_NO_SYSTEM_PATHS
-#
-# Variables:
-#   ${name}_FOUND
-#   ${name}_INCLUDE_DIR
-#   ${name}_LIBRARY
-# 
-# Targets:
-#   ${target}
-#
+#[=======================================================================[.rst:
+
+ Find%% name %%
+
+If %% name %% was built using the CMake buildsystem then it provides its own
+``%% name %%Config.cmake`` file for use with the :command:`find_package` command's
+config mode. This module looks for this file and, if found,
+returns its results with no further action.
+
+Set ``%% name %%_NO_%% name %%_CMAKE`` to ``ON`` to disable this search.
+
+IMPORTED targets
+^^^^^^^^^^^^^^^^
+
+This module defines the following :prop_tgt:`IMPORTED` target:
+
+``%% target %%``
+
+Hints
+^^^^^
+
+The following variables are used to provide hints for the module:
+
+``%% name %%_ROOT``
+  where to find the %% name %% package
+``%% name %%_INCLUDEDIR``
+  where to find the include files for the %% name %% package
+<% if libs is not none -%>
+``%% name %%_LIBRARYDIR``
+  where to find the libraries for the %% name %% package
+<% endif -%>
+
+Result variables
+^^^^^^^^^^^^^^^^
+
+This module will set the following variables if found:
+
+``%% name %%_INCLUDE_DIRS``
+  where to find %% include %%, etc.
+<% if libs is not none -%>
+``%% name %%_LIBRARIES``
+  the libraries to link against to use %% name %%.
+<% endif -%>
+``%% name %%_VERSION``
+  version of the %% name %% library found
+``%% name %%_FOUND``
+  TRUE if found
+ 
+#]=======================================================================]
 
 set(INCLUDE_SEARCH_PATHS)
 set(LIBRARY_SEARCH_PATHS)
 
-if(${name}_ROOT)
-    list(APPEND INCLUDE_SEARCH_PATHS $${${name}_ROOT}/include)
-    list(APPEND LIBRARY_SEARCH_PATHS $${${name}_ROOT}/lib)
-endif()
-
-if(${name}_INCLUDEDIR)
-    list(APPEND INCLUDE_SEARCH_PATHS $${${name}_INCLUDEDIR})
-endif()
-
-if(${name}_LIBRARYDIR)
-    list(APPEND LIBRARY_SEARCH_PATHS $${${name}_LIBRARYDIR})
-endif()
-
-find_package(PkgConfig)
-pkg_check_modules(PC_${name} QUIET ${package})
-
-list(APPEND INCLUDE_SEARCH_PATHS $${PC_${name}_INCLUDE_DIRS})
-list(APPEND LIBRARY_SEARCH_PATHS $${PC_${name}_LIBRARY_DIRS})
-set(${name}_VERSION $${PC_${name}_VERSION})
-
-
-if(${name}_NO_SYSTEM_PATHS)
-    find_path(${name}_INCLUDE_DIR
-        NAMES ${include}
-        PATHS 
-            $${INCLUDE_SEARCH_PATHS}
-            $${CMAKE_INCLUDE_PATH}
-            $${CMAKE_SYSTEM_INCLUDE_PATH}
-            $${CMAKE_INSTALL_PREFIX}/include
-        NO_DEFAULT_PATH)
-
-    find_library(${name}_LIBRARY
-        NAMES ${lib}
-        PATHS
-            $${LIBRARY_SEARCH_PATHS}
-            $${CMAKE_LIBRARY_PATH}
-            $${CMAKE_SYSTEM_LIBRARY_PATH}
-            $${CMAKE_INSTALL_PREFIX}/lib
-        NO_DEFAULT_PATH)
-else()
-    find_path(${name}_INCLUDE_DIR
-        NAMES ${include}
-        PATHS $${INCLUDE_SEARCH_PATHS})
-    find_library(${name}_LIBRARY
-        NAMES ${lib}
-        PATHS $${LIBRARY_SEARCH_PATHS})
-endif()
-
-mark_as_advanced(
-    ${name}_INCLUDE_DIR
-    ${name}_LIBRARY)
-
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(${name}
-    FOUND_VAR ${name}_FOUND
-    REQUIRED_VARS
-        ${name}_LIBRARY
-        ${name}_INCLUDE_DIR
-    VERSION_VAR ${name}_VERSION)
 
-if(${name}_FOUND)
-    set(${name}_LIBRARIES $${${name}_LIBRARY})
-    set(${name}_INCLUDE_DIRS $${${name}_INCLUDE_DIR})
+if (NOT %% name %%_NO_%% name %%_CMAKE)
+    # do a find package call to specifically look for the CMake version
+    # of %% name %%
+    find_package(%% name %% QUIET NO_MODULE)
+    mark_as_advanced(%% name %%_DIR)
 
-    if(NOT TARGET ${target})
-        add_library(${target} UNKNOWN IMPORTED)
-        set_target_properties(${target} PROPERTIES
-            IMPORTED_LOCATION $${${name}_LIBRARY}
-            INTERFACE_INCLUDE_DIRECTORIES $${${name}_INCLUDE_DIR})
+    # if we found the %% name %% cmake package then we are done, and
+    # can print what we found and return.
+    if (%% name %%_FOUND)
+        find_package_handle_standard_args(%% name %% HANDLE_COMPONENTS CONFIG_MODE)
+        return()
     endif()
 endif()
 
+if (%% name %%_ROOT)
+    if (EXISTS ${%% name %%_ROOT}/include)
+      list(APPEND INCLUDE_SEARCH_PATHS ${%% name %%_ROOT}/include)
+    endif()
+<% if libs is not none -%>
+    if (EXISTS ${%% name %%_ROOT}/lib)
+      list(APPEND LIBRARY_SEARCH_PATHS ${%% name %%_ROOT}/lib)
+    endif()
+    if (WIN32 AND EXISTS ${%% name %%_ROOT}/bin)
+      list(APPEND LIBRARY_SEARCH_PATHS ${%% name %%_ROOT}/bin)
+    endif()
+<% endif -%>
+endif()
+
+if (%% name %%_INCLUDEDIR AND EXISTS ${%% name %%_INCLUDEDIR})
+    list(APPEND INCLUDE_SEARCH_PATHS ${%% name %%_INCLUDEDIR})
+endif()
+
+<% if libs is not none -%>
+if (%% name %%_LIBRARYDIR AND EXISTS ${%% name %%_LIBRARYDIR})
+    list(APPEND LIBRARY_SEARCH_PATHS ${%% name %%_LIBRARYDIR})
+endif()
+<% endif -%>
+
+<% if package is not none -%>
+find_package(PkgConfig QUIET)
+if (PKG_CONFIG_FOUND)
+    find_package(PkgConfig)
+    pkg_check_modules(PC_%% name %% QUIET %% package %%)
+    if (PC_%% name %%_FOUND)
+        list(APPEND INCLUDE_SEARCH_PATHS ${PC_%% name %%_INCLUDE_DIRS})
+<% if libs is not none -%>
+        list(APPEND LIBRARY_SEARCH_PATHS ${PC_%% name %%_LIBRARY_DIRS})
+<% endif -%>
+        set(%% name %%_VERSION ${PC_%% name %%_VERSION})
+    endif()
+endif()
+<% endif -%>
+
+set(required_vars %% name %%_INCLUDE_DIR)
+find_path(%% name %%_INCLUDE_DIR
+    NAMES %% include %%
+    PATHS ${CMAKE_MODULE_PATH} ${INCLUDE_SEARCH_PATHS})
+mark_as_advanced(%% name %%_INCLUDE_DIR)
+
+# Derive %% name %% root directory - if not already provided
+if (NOT %% name %%_ROOT)
+    set(%% name %%_ROOT "${%% name %%_INCLUDE_DIR}/..")
+    get_filename_component(%% name %%_ROOT ${%% name %%_ROOT} ABSOLUTE)
+<% if libs is not none -%>
+    if (EXISTS ${%% name %%_ROOT}/lib)
+      list(APPEND LIBRARY_SEARCH_PATHS ${%% name %%_ROOT}/lib)
+    endif()
+    if (WIN32 AND EXISTS ${%% name %%_ROOT}/bin)
+      list(APPEND LIBRARY_SEARCH_PATHS ${%% name %%_ROOT}/bin)
+    endif()
+<% endif -%>
+endif()
+
+mark_as_advanced(%% name %%_ROOT)
+
+<% if find is not none -%>
+%% find %%
+<% endif -%>
+
+<% set ns = namespace(libraries=[]) %>
+<% if libs is not none -%>
+    <% for lib in libs -%>
+    <% if libs | count == 1 -%>
+      <% set var_name = name ~ '_LIBRARY' %>
+    <% else -%>
+      <% set var_name = name ~ '_' ~ lib ~ '_LIBRARY' %>
+    <% endif -%>
+    <% set ns.libraries = ns.libraries + [var_name] %>
+    if (DEFINED %% name %%_LIB_SUFFIX)
+      set (library_name %% lib %%_${GenICam_LIB_SUFFIX})
+    else()
+      set (library_name %% lib %%)
+    endif()
+
+    find_library(%% var_name %%
+        NAMES ${library_name}
+        PATHS ${LIBRARY_SEARCH_PATHS}
+        ${extra_arg})
+    mark_as_advanced(%% var_name %%)
+    list(APPEND required_vars %% var_name %%)
+    <% endfor %>
+<% endif -%>
+unset(extra_arg)
+
+<% if package is not none -%>
+set(extra_arg VERSION_VAR %% name %%_VERSION)
+<% endif -%>
+
+find_package_handle_standard_args(%% name %%
+    FOUND_VAR %% name %%_FOUND
+    REQUIRED_VARS ${required_vars}
+    ${extra_args})
+unset(extra_arg)
+unset(required_vars)
+
+<% if version is not none -%>
+if (%% name %%_INCLUDE_DIR)
+  %% version %%
+endif()
+<% endif -%>
+
+if (%% name %%_FOUND)
+<% if libs is not none -%>
+    set(%% name %%_LIBRARIES)
+    <% for lib in ns.libraries -%>
+    list(APPEND %% name %%_LIBRARIES ${%% lib %%})
+    <% endfor -%>
+<% endif -%>
+    set(%% name %%_INCLUDE_DIRS ${%% name %%_INCLUDE_DIR})
+
+<% if targets is not none -%>
+<% if libs is not none -%>
+    <% for i in range(targets | length) %>
+    if (NOT TARGET %% targets[i] %%)
+        add_library(%% targets[i] %% UNKNOWN IMPORTED)
+        set_target_properties(%% targets[i] %% PROPERTIES
+            IMPORTED_LOCATION ${%% ns.libraries[i] %%}
+            INTERFACE_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR}
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR})
+    endif()
+    <% endfor %>
+<% else -%>
+    <% for target in targets %>
+    if (NOT TARGET %% target %%)
+        add_library(%% target %% INTERFACE IMPORTED)
+        set_target_properties(%% target %% PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR}
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR})
+    endif()
+    <% endfor %>
+<% endif -%>
+
+<% if link is not none -%>
+%% link %%
+<% endif -%>
+<% endif -%>
+endif()
+unset(libraries)

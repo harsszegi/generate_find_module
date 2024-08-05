@@ -1,0 +1,166 @@
+{
+  "packages" : [
+    {
+      "name": "SQLite3pp",
+      "include": "sqlite3pp.h",
+      "libs": ["sqlite3pp"],
+      "targets": ["SQLite3pp::sqlite3pp"],
+      "version": "sqlite3pp_version.cmake",
+      "link": "sqlite3pp_link.cmake"
+    },
+    {
+      "name": "Cppcodec",
+      "include": "cppcodec/base32_hex.hpp",
+      "targets": ["Cppcodec::cppcodec"]
+    },
+    {
+      "name": "Base64",
+      "include": "base64/base64.h",
+      "libs": ["base64"],
+      "targets": ["ReneNyffenegger::base64"]
+    },
+    {
+      "name": "GLM",
+      "include": "glm/glm.hpp",
+      "targets": ["GLM::glm"]
+    },
+    {
+      "name": "JSMN",
+      "include": "jsmn/jsmn.h",
+      "targets": ["JSMN::jsmn"]
+    },
+    {
+      "name": "Inih",
+      "include": "ini.h",
+      "libs": ["inih"],
+      "targets": ["Inih::inih"]
+    },
+    {
+      "name": "Gpiod",
+      "include": "gpiod.h",
+      "libs": ["gpiod"],
+      "targets": ["Gpiod::gpiod"]
+    },
+    {
+      "name": "Libev",
+      "include": "ev.h",
+      "libs": ["ev"],
+      "targets": ["Libev::ev"]
+    },
+    {
+      "name": "Libpcap",
+      "include": "pcap.h",
+      "libs": ["pcap"],
+      "targets": ["Libpcap::pcap"]
+    },
+    {
+      "name": "Popt",
+      "include": "popt.h",
+      "targets": ["Popt::popt"],
+      "libs": ["popt"]
+    },
+    {
+      "name": "Microtar",
+      "include": "microtar.h",
+      "targets": ["Microtar::microtar"],
+      "libs": ["microtar"],
+      "version": "microtar_version.cmake"
+    },
+    {
+      "name": "Duktape",
+      "include": "duktape.h",
+      "targets": ["Duktape::duktape"],
+      "libs": ["duktape"],
+      "version": "duktape_version.cmake"
+    },
+    {
+      "name": "FreeTDS",
+      "include": "sqldb.h",
+      "targets": ["FreeTDS::ct", "FreeTDS::sybdb", "FreeTDS::tdsodbc"],
+      "libs": ["ct", "sybdb", "tdsodbc"]
+    },
+    {
+      "name": "LTTngTools",
+      "include": "lttng/lttng.h",
+      "targets": ["LTTngTools::lttng-ctl"],
+      "libs": ["lttng-ctl"],
+      "link": "lttngtools_link.cmake"
+    },
+    {
+      "name": "Urcu",
+      "include": "urcu/urcu.h",
+      "targets": ["Urcu::common", "Urcu::bp", "Urcu::cds", "Urcu::mb", "Urcu::memb", "Urcu::qsbr", "Urcu::signal", "Urcu::urcu"],
+      "libs": ["urcu-common", "urcu-bp", "urcu-cds", "urcu-mb", "urcu-memb", "urcu-qsbr", "urcu-signal", "urcu"]
+    },
+    {
+      "name": "Mosquitto",
+      "include": "mosquitto.h",
+      "targets": ["Mosquitto::mosquitto"],
+      "libs": ["mosquitto"]
+    },
+    {
+      "name": "ASIO",
+      "include": "asio.hpp",
+      "targets": ["ASIO::asio"],
+      "link" : "asio_link.cmake"
+    },
+    {
+      "name": "Libnghttp2",
+      "include": "nghttp2/nghttp2.h",
+      "targets": ["Libnghttp2::Libnghttp2"],
+      "libs": ["nghttp2"],
+      "link": "nghttp2_link.cmake"
+    },
+    {
+      "name": "Libnghttp2asio",
+      "include": "nghttp2/asio_http2.h",
+      "targets": ["Libnghttp2asio::Libnghttp2asio"],
+      "libs": ["nghttp2_asio"],
+      "link": "nghttp2asio_link.cmake"
+    },
+    {
+      "name": "Libngtcp2",
+      "include": "ngtcp2/ngtcp2.h",
+      "targets": ["Libngtcp2::Libngtcp2"],
+      "libs": ["ngtcp2"],
+      "package": "libngtcp2",
+      "link": "ngtcp2_link.cmake"
+    },
+    {
+      "name": "Libnghttp3",
+      "include": "nghttp3/nghttp3.h",
+      "targets": ["Libnghttp3::Libnghttp3"],
+      "libs": ["nghttp3"],
+      "package": "libnghttp3"
+    },
+    {
+      "name": "Brotli",
+      "include": "brotli/decode.h",
+      "targets": ["Brotli::brotlidec", "Brotli::brotlienc", "Brotli::brotlicommon", "Brotli::brotlidec-static", "Brotli::brotlienc-static", "Brotli::brotlicommon-static"],
+      "libs": ["brotlidec", "brotlienc", "brotlicommon", "brotlidec-static", "brotlienc-static", "brotlicommon-static"]
+    },
+    {
+      "name": "Node",
+      "include": "node/node.h",
+      "targets": ["Node::node"],
+      "libs": ["node"],
+      "version": "node_version.cmake"
+    },
+    {
+      "name": "GenICam",
+      "include": "GenICam.h",
+      "targets": ["GenICam::GCBase", "GenICam::GenApi"],
+      "libs": ["GCBase", "GenApi"],
+      "version": "genicam_version.cmake",
+      "find": "genicam_find.cmake",
+      "link": "genicam_link.cmake"
+    },
+    {
+      "name": "UUID",
+      "include": "uuid/uuid.h",
+      "targets": ["UUID::uuid"],
+      "libs": ["uuid"],
+      "package": "uuid"
+    }
+  ]
+}

@@ -6,8 +6,14 @@ A script to generate CMake Find Modules.
 ## Usage
 
 ```
-./generate_find_module.py --name <module_name> --include <include_file_name> --lib <library_base_name> [--target <target_name>] [--package <package_name>] [--outdir <output_directory>]
+./generate_find_module.py --outdir
 ```
+
+where:
+
+**outdir:** Output directory name.
+
+It uses packages.json to generate multiple Find Module scripts. The json file contains list of packages, each can define the following:
 
 **module\_name:** Name of the module to find. Examples: CURL, PCRE
 
@@ -19,7 +25,7 @@ A script to generate CMake Find Modules.
 
 **package\_name:** Name of the package that will be passed to pkg-config (optional). Examples: libcurl, zlib, sqlite3
 
-**outdir:** Output directory name.
+**version\_name:** The name of the .cmake snippet under templates that can check the version of the library
 
 ## Case study
 
@@ -33,18 +39,32 @@ For that, we need several pieces of informations:
 
 * The name of the pkg-config package CURL provides. We can find out using the following command: ```pkg-config --list-all|grep -i curl``` . In this case, the name of the pkg-config package is `libcurl`
 
-We now have enough information to generate a find module. Let's invoke the script:
+We now have enough information to generate a find module. Let's create a packages.json like this:
 
 ```
-./generate_find_module.py \
-    --name CURL \
-    --include curl.h \
-    --lib curl \
-    --target CURL::CURL \
-    --package libcurl
+{
+  "packages" : [
+    {
+      "name": "CURL",
+      "include": "curl.h",
+      "lib": "curl",
+      "target": "CURL::CURL",
+      "package": "libcurl"
+    }
+  ]
+}
 ```
 
-This will generate a `FindCURL.cmake` in the current directory. Copy that file to your project's `CMAKE_MODULE_PATH` and add the following statement to your `CMakeLists.txt`:
+Then you need to call generate_find_module.py
+
+```
+./generate_find_module.py
+```
+
+This will generate a `FindCURL.cmake` in the current directory. In case generation fails with
+formatting error, make sure to install (with pip) the 'cmakelang' package
+
+Copy that file to your project's `CMAKE_MODULE_PATH` and add the following statement to your `CMakeLists.txt`:
 
 ```
 find_library(CURL REQUIRED)

@@ -1,0 +1,17 @@
+  # get version
+  set(duktape_version_file "${DUKTAPE_INCLUDE_DIR}/duktape.h")
+  if (EXISTS "${duktape_version_file}")
+    file(STRINGS "${duktape_version_file}" duktape_version_str REGEX "^#define[\t ]+DUK_VERSION[\t ]+\".*\"")
+    string(REGEX REPLACE "^#define[\t ]+DUK_VERSION[\t ]+\"([^\"]*)\".*" "\\1" duktape_version "${duktape_version_str}")
+    # split into (major * 10000) + (minor * 100) + patch
+    math(EXPR duktape_major "${duktape_version} / 10000")
+    math(EXPR duktape_minor "(${duktape_version} % 10000) / 100")
+    math(EXPR duktape_patch "${duktape_version} % 100")
+    set(DUKTAPE_VERSION_STRING "${duktape_major}.${duktape_minor}.${duktape_patch}")
+    unset(duktape_major)
+    unset(duktape_minor)
+    unset(duktape_patch)
+    unset(duktape_version)
+    unset(duktape_version_str)
+  endif()
+  unset(duktape_version_file)

@@ -1,0 +1,12 @@
+# Find library suffix
+file(GLOB GenICam_sample_library_glob "${GenICam_ROOT}/lib/*GCBase_*")
+list(GET GenICam_sample_library_glob 0 GenICam_sample_library_path)
+get_filename_component(GenICam_LIB_SUFFIX "${GenICam_sample_library_path}" NAME)
+# Remove "lib" prefix from basename (libGCBase_gcc48_v3_2.so -> GCBase_gcc48_v3_2.so)
+string(REGEX REPLACE "^lib" "" GenICam_LIB_SUFFIX "${GenICam_LIB_SUFFIX}")
+# Remove extension (GCBase_gcc48_v3_2.so -> GCBase_gcc48_v3_2, GCBase_MD_VC141_v3_2.dll -> GCBase_MD_VC141_v3_2)
+string(REGEX REPLACE "\\..*$" "" GenICam_LIB_SUFFIX "${GenICam_LIB_SUFFIX}")
+# Remove library name (GCBase_gcc48_v3_2 -> _gcc48_v3_2, GCBase_MD_VC141_v3_2 -> _MD_VC141_v3_2)
+string(REGEX REPLACE "^GCBase_" "" GenICam_LIB_SUFFIX "${GenICam_LIB_SUFFIX}")
+unset(GenICam_sample_library_glob)
+unset(GenICam_sample_library_path)

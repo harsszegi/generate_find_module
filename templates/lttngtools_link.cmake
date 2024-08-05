@@ -1,0 +1,5 @@
+include(CMakeFindDependencyMacro)
+find_package(Urcu MODULE REQUIRED)
+find_package(LTTngUST MODULE REQUIRED)
+find_dependency(libxml2 REQUIRED)
+set_property(TARGET LTTngTools::lttng-ctl APPEND PROPERTY INTERFACE_LINK_LIBRARIES Urcu::cds Urcu::bp Urcu::common Urcu::urcu LibXml2::LibXml2)
