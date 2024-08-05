@@ -166,6 +166,13 @@
       "name": "RapidXML",
       "include": "rapidxml/rapidxml.hpp",
       "targets": ["RapidXML::RapidXML"]
+    },
+    {
+      "name": "Zmqpp",
+      "include": "zmqpp/zmqpp.hpp",
+      "targets": ["Zmqpp::zmqpp-static", "Zmqpp::zmqpp"],
+      "libs": ["zmqpp-static", "zmqpp"],
+      "link": "zmqpp_link.cmake"
     }
   ]
 }
