@@ -40,8 +40,6 @@ if __name__ == "__main__":
         sys.stdout.write(".")
         sys.stdout.flush()
 
-        targets = p["targets"] if "targets" in p else [ f'{p["name"]}:{p["name"]}' ]
-
         version_data = None
         if "version" in p:
             version_file = p["version"]
@@ -60,17 +58,43 @@ if __name__ == "__main__":
             with open(os.path.join('templates', find_file), 'r') as f:
                 find_data = f.read()
 
+        after_find_data = None
+        if "after_find" in p:
+            after_find_file = p["after_find"]
+            with open(os.path.join('templates', after_find_file), 'r') as f:
+                after_find_data = f.read()
+
         libs = p["libs"] if "libs" in p else None
+        libs_linux = p["libs_linux"] if "libs_linux" in p else None
+        libs_windows = p["libs_windows"] if "libs_windows" in p else None
+        libs_static = p["libs_static"] if "libs_static" in p else None
+
+        targets = p["targets"] if "targets" in p else [ f'{p["name"]}:{p["name"]}' ]
+        targets_linux = p["targets_linux"] if "targets_linux" in p else None
+        targets_windows = p["targets_windows"] if "targets_windows" in p else None
+        targets_static = p["targets_static"] if "targets_static" in p else None
+
+        include_path_suffix = p["include_path_suffix"] if "include_path_suffix" in p else None
+        root_path = p["root_path"] if "root_path" in p else None
 
         context = { 
             "name": p["name"], 
             "include": p["include"], 
+            "include_path_suffix": include_path_suffix,
+            "root_path": root_path,
             "libs": libs,
+            "libs_linux": libs_linux,
+            "libs_windows": libs_windows,
+            "libs_static": libs_static,
             "targets": targets,
+            "targets_linux": targets_linux,
+            "targets_windows": targets_windows,
+            "targets_static": targets_static,
             "package": p["package"] if "package" in p else None, 
             "version": version_data,
             "link": link_data,
-            "find": find_data
+            "find": find_data,
+            "after_find": after_find_data
         }
 
         result = render(template_file, context)

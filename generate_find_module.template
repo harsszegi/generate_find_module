@@ -29,6 +29,10 @@ The following variables are used to provide hints for the module:
 ``%% name %%_LIBRARYDIR``
   where to find the libraries for the %% name %% package
 <% endif -%>
+<% if libs_static is not none -%>
+``%% name %%_USE_STATIC_LIBS``
+  whether to use static libraries instead of shared ones for the %% name %% package
+<% endif -%>
 
 Result variables
 ^^^^^^^^^^^^^^^^
@@ -109,12 +113,26 @@ endif()
 set(required_vars %% name %%_INCLUDE_DIR)
 find_path(%% name %%_INCLUDE_DIR
     NAMES %% include %%
-    PATHS ${CMAKE_MODULE_PATH} ${INCLUDE_SEARCH_PATHS})
+    PATHS ${CMAKE_MODULE_PATH} ${INCLUDE_SEARCH_PATHS}
+<% if include_path_suffix is not none -%>
+    PATH_SUFFIXES "%% include_path_suffix %%"
+<% endif -%>
+)
 mark_as_advanced(%% name %%_INCLUDE_DIR)
+
+<% if version is not none -%>
+if (%% name %%_INCLUDE_DIR)
+  %% version %%
+endif()
+<% endif -%>
 
 # Derive %% name %% root directory - if not already provided
 if (NOT %% name %%_ROOT)
+<% if root_path is not none -%>
+    set(%% name %%_ROOT "${%% name %%_INCLUDE_DIR}/%% root_path %%")
+<% else -%>
     set(%% name %%_ROOT "${%% name %%_INCLUDE_DIR}/..")
+<% endif -%>
     get_filename_component(%% name %%_ROOT ${%% name %%_ROOT} ABSOLUTE)
 <% if libs is not none -%>
     if (EXISTS ${%% name %%_ROOT}/lib)
@@ -132,8 +150,12 @@ mark_as_advanced(%% name %%_ROOT)
 %% find %%
 <% endif -%>
 
-<% set ns = namespace(libraries=[]) %>
+<% set ns = namespace(libraries=[], libraries_static=[], libraries_windows=[], libraries_linux=[]) %>
 <% if libs is not none -%>
+
+<% if libs_static is not none -%>
+  if (NOT %% name %%_USE_STATIC_LIBS)
+<% endif -%>
     <% for lib in libs -%>
     <% if libs | count == 1 -%>
       <% set var_name = name ~ '_LIBRARY' %>
@@ -141,10 +163,42 @@ mark_as_advanced(%% name %%_ROOT)
       <% set var_name = name ~ '_' ~ lib ~ '_LIBRARY' %>
     <% endif -%>
     <% set ns.libraries = ns.libraries + [var_name] %>
+    set (library_name %% lib %%)
+    if (DEFINED %% name %%_LIB_PREFIX)
+      set (library_name "${%% name %%_LIB_PREFIX}${library_name}")
+    endif()
     if (DEFINED %% name %%_LIB_SUFFIX)
-      set (library_name %% lib %%_${GenICam_LIB_SUFFIX})
-    else()
-      set (library_name %% lib %%)
+      set (library_name "${library_name}${%% name %%_LIB_SUFFIX}")
+    endif()
+
+    find_library(%% var_name %%
+        NAMES ${library_name}
+        PATHS ${LIBRARY_SEARCH_PATHS}
+        ${extra_arg}
+        ${FIND_LIBRARY_PATH_SUFFIXES})
+    mark_as_advanced(%% var_name %%)
+    list(APPEND required_vars %% var_name %%)
+    <% endfor %>
+<% if libs_static is not none -%>
+  endif()
+<% endif -%>
+<% endif -%>
+
+<% if libs_static is not none -%>
+  if (%% name %%_USE_STATIC_LIBS)
+    <% for lib in libs_static -%>
+    <% if libs | count == 1 -%>
+      <% set var_name = name ~ '_LIBRARY' %>
+    <% else -%>
+      <% set var_name = name ~ '_' ~ lib ~ '_LIBRARY' %>
+    <% endif -%>
+    <% set ns.libraries_static = ns.libraries_static + [var_name] %>
+    set (library_name %% lib %%)
+    if (DEFINED %% name %%_LIB_PREFIX)
+      set (library_name "${%% name %%_LIB_PREFIX}${library_name}")
+    endif()
+    if (DEFINED %% name %%_LIB_SUFFIX)
+      set (library_name "${library_name}${%% name %%_LIB_SUFFIX}")
     endif()
 
     find_library(%% var_name %%
@@ -154,7 +208,75 @@ mark_as_advanced(%% name %%_ROOT)
     mark_as_advanced(%% var_name %%)
     list(APPEND required_vars %% var_name %%)
     <% endfor %>
+  endif()
 <% endif -%>
+
+<% if libs_linux is not none -%>
+<% if libs_static is not none -%>
+  if (NOT %% name %%_USE_STATIC_LIBS)
+<% endif -%>
+  if (NOT MSVC)
+    <% for lib in libs_linux -%>
+    <% if libs_linux | count == 1 -%>
+      <% set var_name = name ~ '_LIBRARY' %>
+    <% else -%>
+      <% set var_name = name ~ '_' ~ lib ~ '_LIBRARY' %>
+    <% endif -%>
+    <% set ns.libraries_linux = ns.libraries_linux + [var_name] %>
+    set (library_name %% lib %%)
+    if (DEFINED %% name %%_LIB_PREFIX)
+      set (library_name "${%% name %%_LIB_PREFIX}${library_name}")
+    endif()
+    if (DEFINED %% name %%_LIB_SUFFIX)
+      set (library_name "${library_name}${%% name %%_LIB_SUFFIX}")
+    endif()
+
+    find_library(%% var_name %%
+        NAMES ${library_name}
+        PATHS ${LIBRARY_SEARCH_PATHS}
+        ${extra_arg})
+    mark_as_advanced(%% var_name %%)
+    list(APPEND required_vars %% var_name %%)
+    <% endfor %>
+  endif()
+<% if libs_static is not none -%>
+  endif()
+<% endif -%>
+<% endif -%>
+
+<% if libs_windows is not none -%>
+<% if libs_static is not none -%>
+  if (NOT %% name %%_USE_STATIC_LIBS)
+<% endif -%>
+  if (MSVC)
+    <% for lib in libs_windows -%>
+    <% if libs_windows | count == 1 -%>
+      <% set var_name = name ~ '_LIBRARY' %>
+    <% else -%>
+      <% set var_name = name ~ '_' ~ lib ~ '_LIBRARY' %>
+    <% endif -%>
+    <% set ns.libraries_windows = ns.libraries_windows + [var_name] %>
+    set (library_name %% lib %%)
+    if (DEFINED %% name %%_LIB_PREFIX)
+      set (library_name "${%% name %%_LIB_PREFIX}${library_name}")
+    endif()
+    if (DEFINED %% name %%_LIB_SUFFIX)
+      set (library_name "${library_name}${%% name %%_LIB_SUFFIX}")
+    endif()
+
+    find_library(%% var_name %%
+        NAMES ${library_name}
+        PATHS ${LIBRARY_SEARCH_PATHS}
+        ${extra_arg})
+    mark_as_advanced(%% var_name %%)
+    list(APPEND required_vars %% var_name %%)
+    <% endfor %>
+  endif()
+<% if libs_static is not none -%>
+  endif()
+<% endif -%>
+<% endif -%>
+
 unset(extra_arg)
 
 <% if package is not none -%>
@@ -168,22 +290,68 @@ find_package_handle_standard_args(%% name %%
 unset(extra_arg)
 unset(required_vars)
 
-<% if version is not none -%>
-if (%% name %%_INCLUDE_DIR)
-  %% version %%
-endif()
+<% if after_find is not none -%>
+%% after_find %%
 <% endif -%>
 
 if (%% name %%_FOUND)
-<% if libs is not none -%>
+<% if libs is not none or libs_linux is not none or libs_windows is not none -%>
     set(%% name %%_LIBRARIES)
+<% endif -%>
+
+<% if libs is not none -%>
+<% if libs_static is not none -%>
+  if (NOT %% name %%_USE_STATIC_LIBS)
+<% endif -%>
     <% for lib in ns.libraries -%>
     list(APPEND %% name %%_LIBRARIES ${%% lib %%})
     <% endfor -%>
+<% if libs_static is not none -%>
+  endif()
 <% endif -%>
+<% endif -%>
+<% if libs_static is not none -%>
+  if (%% name %%_USE_STATIC_LIBS)
+    <% for lib in ns.libraries_static -%>
+    list(APPEND %% name %%_LIBRARIES ${%% lib %%})
+    <% endfor -%>
+  endif()
+<% endif -%>
+<% if libs_linux is not none -%>
+<% if libs_static is not none -%>
+  if (NOT %% name %%_USE_STATIC_LIBS)
+<% endif -%>
+  if (NOT MSVC)
+    <% for lib in ns.libraries_linux -%>
+    list(APPEND %% name %%_LIBRARIES ${%% lib %%})
+    <% endfor -%>
+  endif()
+<% if libs_static is not none -%>
+  endif()
+<% endif -%>
+<% endif -%>
+<% if libs_windows is not none -%>
+<% if libs_static is not none -%>
+  if (NOT %% name %%_USE_STATIC_LIBS)
+<% endif -%>
+  if (MSVC)
+    <% for lib in ns.libraries_windows -%>
+    list(APPEND %% name %%_LIBRARIES ${%% lib %%})
+    <% endfor -%>
+  endif()
+<% if libs_static is not none -%>
+  endif()
+<% endif -%>
+<% endif -%>
+
     set(%% name %%_INCLUDE_DIRS ${%% name %%_INCLUDE_DIR})
 
+<% if targets is not none or targets_linux is not none or targets_windows is not none -%>
+
 <% if targets is not none -%>
+<% if libs_static is not none -%>
+  if (NOT %% name %%_USE_STATIC_LIBS)
+<% endif -%>
 <% if libs is not none -%>
     <% for i in range(targets | length) %>
     if (NOT TARGET %% targets[i] %%)
@@ -204,10 +372,102 @@ if (%% name %%_FOUND)
     endif()
     <% endfor %>
 <% endif -%>
+<% if libs_static is not none -%>
+  endif()
+<% endif -%>
+<% endif -%>
+
+<% if targets_static is not none -%>
+  if (%% name %%_USE_STATIC_LIBS)
+<% if libs_static is not none -%>
+    <% for i in range(targets_static | length) %>
+    if (NOT TARGET %% targets_static[i] %%)
+        add_library(%% targets_static[i] %% UNKNOWN IMPORTED)
+        set_target_properties(%% targets_static[i] %% PROPERTIES
+            IMPORTED_LOCATION ${%% ns.libraries_static[i] %%}
+            INTERFACE_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR}
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR})
+    endif()
+    <% endfor %>
+<% else -%>
+    <% for target in targets_static %>
+    if (NOT TARGET %% target %%)
+        add_library(%% target %% INTERFACE IMPORTED)
+        set_target_properties(%% target %% PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR}
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR})
+    endif()
+    <% endfor %>
+<% endif -%>
+  endif()
+<% endif -%>
+
+<% if targets_windows is not none -%>
+<% if libs_static is not none -%>
+  if (NOT %% name %%_USE_STATIC_LIBS)
+<% endif -%>
+  if (MSVC)
+<% if libs_windows is not none -%>
+    <% for i in range(targets_windows | length) %>
+    if (NOT TARGET %% targets_windows[i] %%)
+        add_library(%% targets_windows[i] %% UNKNOWN IMPORTED)
+        set_target_properties(%% targets_windows[i] %% PROPERTIES
+            IMPORTED_LOCATION ${%% ns.libraries_windows[i] %%}
+            INTERFACE_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR}
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR})
+    endif()
+    <% endfor %>
+<% else -%>
+    <% for target in targets_windows %>
+    if (NOT TARGET %% target %%)
+        add_library(%% target %% INTERFACE IMPORTED)
+        set_target_properties(%% target %% PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR}
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR})
+    endif()
+    <% endfor %>
+<% endif -%>
+  endif()
+<% if libs_static is not none -%>
+  endif()
+<% endif -%>
+<% endif -%>
+
+<% if targets_linux is not none -%>
+<% if libs_static is not none -%>
+  if (NOT %% name %%_USE_STATIC_LIBS)
+<% endif -%>
+  if (NOT MSVC)
+<% if libs_linux is not none -%>
+    <% for i in range(targets_linux | length) %>
+    if (NOT TARGET %% targets_linux[i] %%)
+        add_library(%% targets_linux[i] %% UNKNOWN IMPORTED)
+        set_target_properties(%% targets_linux[i] %% PROPERTIES
+            IMPORTED_LOCATION ${%% ns.libraries_linux[i] %%}
+            INTERFACE_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR}
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR})
+    endif()
+    <% endfor %>
+<% else -%>
+    <% for target in targets_linux %>
+    if (NOT TARGET %% target %%)
+        add_library(%% target %% INTERFACE IMPORTED)
+        set_target_properties(%% target %% PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR}
+            INTERFACE_SYSTEM_INCLUDE_DIRECTORIES ${%% name %%_INCLUDE_DIR})
+    endif()
+    <% endfor %>
+<% endif -%>
+  endif()
+<% if libs_static is not none -%>
+  endif()
+<% endif -%>
+<% endif -%>
 
 <% if link is not none -%>
 %% link %%
 <% endif -%>
+
 <% endif -%>
 endif()
 unset(libraries)

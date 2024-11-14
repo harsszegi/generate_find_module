@@ -76,8 +76,8 @@
     {
       "name": "FreeTDS",
       "include": "sqldb.h",
-      "targets": ["FreeTDS::ct", "FreeTDS::sybdb", "FreeTDS::tdsodbc"],
-      "libs": ["ct", "sybdb", "tdsodbc"]
+      "targets": ["FreeTDS::ct", "FreeTDS::sybdb"],
+      "libs": ["ct", "sybdb"]
     },
     {
       "name": "LTTngTools",
@@ -85,6 +85,14 @@
       "targets": ["LTTngTools::lttng-ctl"],
       "libs": ["lttng-ctl"],
       "link": "lttngtools_link.cmake"
+    },
+    {
+      "name": "LTTngUST",
+      "include": "lttng/ust-version.h",
+      "targets": ["LTTngUST::lttng-ust-ctl", "LTTngUST::lttng-ust-cyg-profile", "LTTngUST::lttng-ust-cyg-profile-fast", "LTTngUST::lttng-ust-dl", "LTTngUST::lttng-ust-fd", "LTTngUST::lttng-ust-fork", "LTTngUST::lttng-ust-libc-wrapper", "LTTngUST::lttng-ust-pthread-wrapper", "LTTngUST::lttng-ust-tracepoint", "LTTngUST::lttng-ust"],
+      "libs": ["lttng-ust-ctl", "lttng-ust-cyg-profile", "lttng-ust-cyg-profile-fast", "lttng-ust-dl", "lttng-ust-fd", "lttng-ust-fork", "lttng-ust-libc-wrapper", "lttng-ust-pthread-wrapper", "lttng-ust-tracepoint", "lttng-ust"],
+      "link": "lttngust_link.cmake",
+      "version": "lttngust_version.cmake"
     },
     {
       "name": "Urcu",
@@ -99,7 +107,7 @@
       "libs": ["mosquitto"]
     },
     {
-      "name": "ASIO",
+      "name": "Asio",
       "include": "asio.hpp",
       "targets": ["ASIO::asio"],
       "link" : "asio_link.cmake"
@@ -136,19 +144,26 @@
     {
       "name": "Brotli",
       "include": "brotli/decode.h",
-      "targets": ["Brotli::brotlidec", "Brotli::brotlienc", "Brotli::brotlicommon", "Brotli::brotlidec-static", "Brotli::brotlienc-static", "Brotli::brotlicommon-static"],
-      "libs": ["brotlidec", "brotlienc", "brotlicommon", "brotlidec-static", "brotlienc-static", "brotlicommon-static"]
+      "targets": ["Brotli::brotlidec", "Brotli::brotlienc", "Brotli::brotlicommon"],
+      "libs": ["brotlidec", "brotlienc", "brotlicommon"],
+      "targets_static": ["Brotli::brotlidec-static", "Brotli::brotlienc-static", "Brotli::brotlicommon-static"],
+      "libs_static": ["brotlidec-static", "brotlienc-static", "brotlicommon-static"]
     },
     {
       "name": "Node",
       "include": "node/node.h",
       "targets": ["Node::node"],
       "libs": ["node"],
-      "version": "node_version.cmake"
+      "version": "node_version.cmake",
+      "link": "node_link.cmake",
+      "find": "node_find.cmake",
+      "after_find": "node_after_find.cmake"
     },
     {
       "name": "GenICam",
       "include": "GenICam.h",
+      "include_path_suffix": "library/CPP/include",
+      "root_path": "../../..",
       "targets": ["GenICam::GCBase", "GenICam::GenApi"],
       "libs": ["GCBase", "GenApi"],
       "version": "genicam_version.cmake",
@@ -170,9 +185,53 @@
     {
       "name": "Zmqpp",
       "include": "zmqpp/zmqpp.hpp",
-      "targets": ["Zmqpp::zmqpp-static", "Zmqpp::zmqpp"],
-      "libs": ["zmqpp-static", "zmqpp"],
+      "targets": ["Zmqpp::zmqpp"],
+      "libs": ["zmqpp"],
+      "targets_static": ["Zmqpp::zmqpp-static"],
+      "libs_static": ["zmqpp-static"],
       "link": "zmqpp_link.cmake"
+    },
+    {
+      "name": "BetterEnums",
+      "include": "better_enums/enum.h",
+      "targets": ["BetterEnums::betterenums"]
+    },
+    {
+      "name": "Tiff",
+      "include": "tiff.h",
+      "targets": ["TIFF::tiff", "TIFF::tiffxx"],
+      "libs": ["tiff", "tiffxx"],
+      "find": "tiff_find.cmake"
+    },
+    {
+      "name": "Cinder",
+      "include": "cinder/Cinder.h",
+      "targets": ["Cinder::cinder"],
+      "libs": ["cinder"],
+      "link": "cinder_link.cmake"
+    },
+    {
+      "name": "Skia",
+      "include": "config/SkUserConfig.h",
+      "targets": ["Skia::skia", "Skia::skshaper", "Skia::skunicode"],
+      "libs": ["skia", "skshaper", "skunicode"],
+      "link": "skia_link.cmake"
+    },
+    {
+      "name": "Spidermonkey17",
+      "include": "js-17.0/jsapi.h",
+      "targets": ["Spidermonkey::js"],
+      "libs": ["mozjs-17.0"],
+      "link": "spidermonkey17_link.cmake"
+    },
+    {
+      "name": "Spidermonkey38",
+      "include": "mozjs-38/jsapi.h",
+      "targets": ["Spidermonkey::js"],
+      "libs": ["mozjs-38"],
+      "targets_static": ["Spidermonkey::js-static"],
+      "libs_static": ["js_static"],
+      "link": "spidermonkey38_link.cmake"
     }
   ]
 }
