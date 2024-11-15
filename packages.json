@@ -232,6 +232,21 @@
       "targets_static": ["Spidermonkey::js-static"],
       "libs_static": ["js_static"],
       "link": "spidermonkey38_link.cmake"
+    },
+    {
+      "name": "Libssh2",
+      "include": "libssh2.h",
+      "targets": ["Libssh2::libssh2"],
+      "libs": ["ssh2"],
+      "package": "libssh2",
+      "version": "libssh2_version.cmake"
+    },
+    {
+      "name": "Libpcap",
+      "include": "pcap.h",
+      "targets": ["Libpcap::pcap"],
+      "libs": ["pcap"],
+      "package": "libpcap"
     }
   ]
 }
