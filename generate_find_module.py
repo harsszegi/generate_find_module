@@ -77,7 +77,10 @@ if __name__ == "__main__":
         include_path_suffix = p["include_path_suffix"] if "include_path_suffix" in p else None
         root_path = p["root_path"] if "root_path" in p else None
 
+        skip_cmake = p["skip_cmake"] if "skip_cmake" in p else False
+
         context = { 
+            "skip_cmake": skip_cmake,
             "name": p["name"], 
             "include": p["include"], 
             "include_path_suffix": include_path_suffix,

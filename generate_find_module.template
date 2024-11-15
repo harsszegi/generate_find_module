@@ -2,12 +2,14 @@
 
  Find%% name %%
 
+<% if not skip_cmake -%>
 If %% name %% was built using the CMake buildsystem then it provides its own
 ``%% name %%Config.cmake`` file for use with the :command:`find_package` command's
 config mode. This module looks for this file and, if found,
 returns its results with no further action.
 
 Set ``%% name %%_NO_%% name %%_CMAKE`` to ``ON`` to disable this search.
+<% endif -%>
 
 IMPORTED targets
 ^^^^^^^^^^^^^^^^
@@ -57,6 +59,7 @@ set(LIBRARY_SEARCH_PATHS)
 
 include(FindPackageHandleStandardArgs)
 
+<% if not skip_cmake -%>
 if (NOT %% name %%_NO_%% name %%_CMAKE)
     # do a find package call to specifically look for the CMake version
     # of %% name %%
@@ -70,6 +73,7 @@ if (NOT %% name %%_NO_%% name %%_CMAKE)
         return()
     endif()
 endif()
+<% endif -%>
 
 if (%% name %%_ROOT)
     if (EXISTS ${%% name %%_ROOT}/include)

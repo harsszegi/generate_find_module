@@ -247,6 +247,13 @@
       "targets": ["Libpcap::pcap"],
       "libs": ["pcap"],
       "package": "libpcap"
+    },
+   {
+      "name": "RapidJSON",
+      "include": "rapidjson/rapidjson.h",
+      "targets": ["RapidJSON::rapidjson"],
+      "package": "RapidJSON",
+      "skip_cmake": true
     }
   ]
 }
