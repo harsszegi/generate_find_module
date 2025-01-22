@@ -254,6 +254,14 @@
       "targets": ["RapidJSON::rapidjson"],
       "package": "RapidJSON",
       "skip_cmake": true
+    },
+    {
+      "name": "cfitsio",
+      "include": "fitsio.h",
+      "targets": ["cfitsio::cfitsio"],
+      "libs": ["cfitsio"],
+      "package": "cfitsio",
+      "skip_cmake": true
     }
   ]
 }
